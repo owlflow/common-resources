@@ -1,0 +1,6 @@
+{
+  "REGION": "us-east-1",
+  "DEPLOYMENT_BUCKET": "example-serverless",
+  "CUSTOM_API_HOST": "aws-us-east-1.api.dev.owlflow.io",
+  "ACM_CERTIFICATE_NAME": "aws-us-east-1.api.dev.owlflow.io"
+}
