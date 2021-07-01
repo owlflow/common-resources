@@ -2,9 +2,6 @@ service: owlflow-common
 
 frameworkVersion: ">=2.0.0 <3.0.0"
 
-plugins:
-  - serverless-domain-manager
-
 custom:
   defaultStage: dev
   currentStage: ${opt:stage, self:custom.defaultStage}
@@ -19,19 +16,15 @@ custom:
   indexes:
     flows:
       organizationIdWebhookId: ${self:custom.tableNames.flows}-organizationIdWebhookIdIndex
-  customDomain:
-    domainName: ${self:custom.config.CUSTOM_API_HOST}
-    certificateName: ${self:custom.config.ACM_CERTIFICATE_NAME}
-    basePath: 'v1'
-    stage: ${self:provider.stage}
-    createRoute53Record: false
-    endpointType: 'regional'
 
 provider:
   name: aws
   runtime: nodejs12.x
   stage: ${self:custom.currentStage}
   region: ${self:custom.config.REGION}
+  timeout: 30
+  logRetentionInDays: 14
+  endpointType: regional
   deploymentBucket:
     name: ${self:custom.deploymentBucket}-${self:provider.region}
   apiGateway:
