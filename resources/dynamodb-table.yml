@@ -1,0 +1,59 @@
+Resources:
+  FlowsTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.tableNames.flows}
+      AttributeDefinitions:
+        - AttributeName: id
+          AttributeType: S
+        - AttributeName: webhookId
+          AttributeType: S
+      KeySchema:
+        - AttributeName: id
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+
+  FlowNodesTable:
+    Type: AWS::DynamoDB::Table
+    Properties:
+      TableName: ${self:custom.tableNames.flowNodes}
+      AttributeDefinitions:
+        - AttributeName: flowId
+          AttributeType: S
+        - AttributeName: id
+          AttributeType: S
+      KeySchema:
+        - AttributeName: flowId
+          KeyType: HASH
+        - AttributeName: id
+          KeyType: RANGE
+      BillingMode: PAY_PER_REQUEST
+      TimeToLiveSpecification:
+        AttributeName: ttl
+        Enabled: true
+
+Outputs:
+  FlowsTableName:
+    Value: ${self:custom.tableNames.flows}
+    Export:
+      Name: ${self:custom.resourcesPrefix}-FlowsTableName
+
+  FlowsTableArn:
+    Value:
+      !GetAtt [FlowsTable, Arn]
+    Export:
+      Name: ${self:custom.resourcesPrefix}-FlowsTableArn
+
+  FlowNodesTableName:
+    Value: ${self:custom.tableNames.flowNodes}
+    Export:
+      Name: ${self:custom.resourcesPrefix}-FlowNodesTableName
+
+  FlowNodesTableArn:
+    Value:
+      !GetAtt [FlowNodesTable, Arn]
+    Export:
+      Name: ${self:custom.resourcesPrefix}-FlowNodesTableArn

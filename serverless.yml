@@ -1,0 +1,65 @@
+service: owlflow-common
+
+frameworkVersion: ">=1.1.0 <2.0.0"
+
+plugins:
+  - serverless-domain-manager
+
+custom:
+  defaultStage: dev
+  currentStage: ${opt:stage, self:custom.defaultStage}
+  resourcesPrefix: ${self:service}-${self:custom.currentStage}
+  config: ${file(./config.${self:custom.currentStage}.json)}
+  deploymentBucket: ${self:custom.config.DEPLOYMENT_BUCKET}
+  # Set the table name here so we can use it at many place
+  tableNames:
+    flows: owlflow-${self:custom.currentStage}-flows
+    flowNodes: owlflow-${self:custom.currentStage}-flow-nodes
+  customDomain:
+    domainName: ${self:custom.config.CUSTOM_API_HOST}
+    certificateName: ${self:custom.config.ACM_CERTIFICATE_NAME}
+    basePath: 'v1'
+    stage: ${self:provider.stage}
+    createRoute53Record: false
+    endpointType: 'regional'
+
+provider:
+  name: aws
+  runtime: nodejs12.x
+  stage: ${self:custom.currentStage}
+  region: ${self:custom.config.REGION}
+  deploymentBucket:
+    name: ${self:custom.deploymentBucket}-${self:provider.region}
+  apiGateway:
+    description: "owlflow api endpoint"
+
+package:
+  excludeDevDependencies: true
+  individually: false
+  exclude:
+    - node_modules/**
+    - .eslintrc.js
+    - .gitattributes
+    - .gitignore
+    - .git/**
+    - .npmrc
+    - .babelrc
+    - README.md
+    - serverless.yml
+
+functions:
+  status:
+    handler: handler.status
+    name: ${self:custom.resourcesPrefix}-status
+    events:
+      - http:
+          path: /status
+          method: get
+
+# Create our resources with separate CloudFormation templates
+resources:
+  # API Gateway
+  - ${file(resources/api-gateway.yml)}
+
+  # DynamoDB
+  - ${file(resources/dynamodb-table.yml)}

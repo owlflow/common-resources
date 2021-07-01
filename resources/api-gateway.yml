@@ -1,0 +1,11 @@
+Outputs:
+  ApiGatewayRestApi:
+    Value:
+      Ref: ApiGatewayRestApi
+    Export:
+      Name: ${self:custom.resourcesPrefix}-ApiGatewayRestApi
+
+  RootResourceId:
+    Value: !GetAtt [ApiGatewayRestApi, RootResourceId]
+    Export:
+      Name: ${self:custom.resourcesPrefix}-RootResourceId
