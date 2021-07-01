@@ -11,8 +11,6 @@ cache:
 deploy:development:
   stage: deploy
   script:
-    - export AWS_ACCESS_KEY_ID=$DEV_AWS_ACCESS_KEY_ID
-    - export AWS_SECRET_ACCESS_KEY=$DEV_AWS_SECRET_ACCESS_KEY
     - make deploy
   only:
     - master
@@ -21,8 +19,6 @@ deploy:development:
 deploy:production:
   stage: deploy
   script:
-    - export AWS_ACCESS_KEY_ID=$PROD_AWS_ACCESS_KEY_ID
-    - export AWS_SECRET_ACCESS_KEY=$PROD_AWS_SECRET_ACCESS_KEY
     - make deploy STAGE=prd
   when: manual
   only:

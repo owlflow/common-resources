@@ -1,6 +1,6 @@
 service: owlflow-common
 
-frameworkVersion: ">=1.1.0 <2.0.0"
+frameworkVersion: ">=2.0.0 <3.0.0"
 
 plugins:
   - serverless-domain-manager
@@ -15,6 +15,10 @@ custom:
   tableNames:
     flows: owlflow-${self:custom.currentStage}-flows
     flowNodes: owlflow-${self:custom.currentStage}-flow-nodes
+  # Set the table indexes name here so we can use it at many place
+  indexes:
+    flows:
+      organizationIdWebhookId: ${self:custom.tableNames.flows}-organizationIdWebhookIdIndex
   customDomain:
     domainName: ${self:custom.config.CUSTOM_API_HOST}
     certificateName: ${self:custom.config.ACM_CERTIFICATE_NAME}

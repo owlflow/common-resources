@@ -4,13 +4,26 @@ Resources:
     Properties:
       TableName: ${self:custom.tableNames.flows}
       AttributeDefinitions:
+        - AttributeName: organizationId
+          AttributeType: S
         - AttributeName: id
           AttributeType: S
         - AttributeName: webhookId
           AttributeType: S
       KeySchema:
+        - AttributeName: organizationId
+          KeyType: HASH
         - AttributeName: id
           KeyType: RANGE
+      GlobalSecondaryIndexes:
+        - IndexName: ${self:custom.indexes.flows.organizationIdWebhookId}
+          KeySchema:
+            - AttributeName: organizationId
+              KeyType: HASH
+            - AttributeName: webhookId
+              KeyType: RANGE
+          Projection:
+            ProjectionType: ALL
       BillingMode: PAY_PER_REQUEST
       TimeToLiveSpecification:
         AttributeName: ttl
@@ -57,3 +70,8 @@ Outputs:
       !GetAtt [FlowNodesTable, Arn]
     Export:
       Name: ${self:custom.resourcesPrefix}-FlowNodesTableArn
+
+  FlowsOrganizationIdWebhookIdIndexName:
+    Value: ${self:custom.indexes.flows.organizationIdWebhookId}
+    Export:
+      Name: ${self:custom.resourcesPrefix}-FlowsOrganizationIdWebhookIdIndexName
